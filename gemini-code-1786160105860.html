@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>我的幸福感恩小書</title>
+  <style>
+    :root {
+      --bg-color: #f4efe6;
+      --book-bg: #fffdf8;
+      --text-color: #3e2723;
+      --accent-color: #2e7d32;
+      --btn-hover: #1b5e20;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 15px;
+    }
+
+    .book-container {
+      width: 100%;
+      max-width: 450px;
+      background-color: var(--book-bg);
+      border: 3px solid #d7ccc8;
+      border-radius: 18px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      padding: 25px 20px;
+      position: relative;
+      min-height: 520px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+    }
+
+    .page {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .page.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 26px;
+      text-align: center;
+      margin-bottom: 15px;
+      color: #4e342e;
+    }
+
+    .prompt-title {
+      font-size: 22px;
+      font-weight: bold;
+      line-height: 1.4;
+      margin-bottom: 15px;
+      color: #2c1810;
+      background-color: #f5ebe0;
+      padding: 12px;
+      border-radius: 10px;
+      border-left: 6px solid #8d6e63;
+    }
+
+    textarea {
+      width: 100%;
+      height: 140px;
+      font-size: 20px;
+      line-height: 1.5;
+      padding: 12px;
+      border: 2px solid #bcaaa4;
+      border-radius: 12px;
+      background-color: #fafafa;
+      resize: none;
+      margin-bottom: 15px;
+    }
+
+    .voice-btn-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .btn-voice {
+      background-color: #e65100;
+      color: white;
+      border: none;
+      font-size: 20px;
+      font-weight: bold;
+      padding: 14px 24px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 10px rgba(230, 81, 0, 0.3);
+      touch-action: manipulation;
+    }
+
+    .btn-voice.recording {
+      background-color: #d50000;
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    .btn-next {
+      background-color: var(--accent-color);
+      color: white;
+      border: none;
+      font-size: 22px;
+      font-weight: bold;
+      padding: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: auto;
+      box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
+    }
+
+    .status-msg {
+      font-size: 16px;
+      text-align: center;
+      color: #757575;
+      min-height: 24px;
+      margin-bottom: 5px;
+    }
+
+    /* 封面與封底特別樣式 */
+    .cover-page {
+      text-align: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .cover-icon {
+      font-size: 70px;
+    }
+
+    .stamp {
+      font-size: 80px;
+      margin: 20px 0;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="book-container">
+
+  <!-- 封面 -->
+  <div class="page active cover-page" id="page-0">
+    <div class="cover-icon">📖</div>
+    <h1>我的幸福感恩小書</h1>
+    <p style="font-size: 20px; color: #6d4c41;">點擊下方按鈕<br>翻開今天的日記頁吧！</p>
+    <button class="btn-next" onclick="nextPage(1)">翻開日記本 ➔</button>
+  </div>
+
+  <!-- 第 1 頁 -->
+  <div class="page" id="page-1">
+    <div class="prompt-title">1. 今天有吃到什麼好吃的，或是遇到開心的事嗎？</div>
+    <textarea id="input-1" placeholder="按下方橘色按鈕用講的，或是直接打字..."></textarea>
+    <div class="status-msg" id="status-1"></div>
+    <div class="voice-btn-container">
+      <button class="btn-voice" id="voice-btn-1" onclick="toggleVoice(1)">
+        🎤 <span id="voice-txt-1">按住/點擊開始講話</span>
+      </button>
+    </div>
+    <button class="btn-next" onclick="nextPage(2)">寫好了，下一頁 ➔</button>
+  </div>
+
+  <!-- 第 2 頁 -->
+  <div class="page" id="page-2">
+    <div class="prompt-title">2. 今天有想感謝哪位家人或朋友嗎？</div>
+    <textarea id="input-2" placeholder="按下方橘色按鈕用講的，或是直接打字..."></textarea>
+    <div class="status-msg" id="status-2"></div>
+    <div class="voice-btn-container">
+      <button class="btn-voice" id="voice-btn-2" onclick="toggleVoice(2)">
+        🎤 <span id="voice-txt-2">按住/點擊開始講話</span>
+      </button>
+    </div>
+    <button class="btn-next" onclick="nextPage(3)">寫好了，下一頁 ➔</button>
+  </div>
+
+  <!-- 第 3 頁 -->
+  <div class="page" id="page-3">
+    <div class="prompt-title">3. 今天對自己說一句鼓勵的話吧！</div>
+    <textarea id="input-3" placeholder="按下方橘色按鈕用講的，或是直接打字..."></textarea>
+    <div class="status-msg" id="status-3"></div>
+    <div class="voice-btn-container">
+      <button class="btn-voice" id="voice-btn-3" onclick="toggleVoice(3)">
+        🎤 <span id="voice-txt-3">按住/點擊開始講話</span>
+      </button>
+    </div>
+    <button class="btn-next" onclick="submitJournal()">合上小書並儲存 🪶</button>
+  </div>
+
+  <!-- 封底/完成頁 -->
+  <div class="page cover-page" id="page-4">
+    <div class="stamp">💮</div>
+    <h1>今日紀錄完成！</h1>
+    <p style="font-size: 20px; line-height: 1.6; color: #33691e;">
+      太棒了！專屬助教小福已經幫您把今天的 3 件好事好好的存進故事書裡囉！<br>祝您今晚有個好夢 🌙
+    </p>
+  </div>
+
+</div>
+
+<script>
+  let isRecording = false;
+  let recognition = null;
+
+  // 初始化瀏覽器語音辨識 (Web Speech API)
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'zh-TW';
+  } else {
+    alert('您的手機瀏覽器不支援語音輸入，請直接打字即可。');
+  }
+
+  // 翻頁邏輯
+  function nextPage(pageNum) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(`page-${pageNum}`).classList.add('active');
+    stopSpeech(); // 翻頁時停止錄音
+  }
+
+  // 開啟/停止語音辨識
+  function toggleVoice(pageId) {
+    if (!recognition) return;
+
+    const btn = document.getElementById(`voice-btn-${pageId}`);
+    const txt = document.getElementById(`voice-txt-${pageId}`);
+    const status = document.getElementById(`status-${pageId}`);
+    const textarea = document.getElementById(`input-${pageId}`);
+
+    if (isRecording) {
+      recognition.stop();
+      return;
+    }
+
+    recognition.onstart = function() {
+      isRecording = true;
+      btn.classList.add('recording');
+      txt.innerText = "正在聽您說話...";
+      status.innerText = "請開始講話...";
+    };
+
+    recognition.onresult = function(event) {
+      const transcript = event.results[0][0].transcript;
+      textarea.value += (textarea.value ? " " : "") + transcript;
+      status.innerText = "已收錄您的話語！";
+    };
+
+    recognition.onerror = function(event) {
+      status.innerText = "沒聽清楚，請再試一次。";
+    };
+
+    recognition.onend = function() {
+      isRecording = false;
+      btn.classList.remove('recording');
+      txt.innerText = "按住/點擊開始講話";
+    };
+
+    recognition.start();
+  }
+
+  function stopSpeech() {
+    if (recognition && isRecording) {
+      recognition.stop();
+    }
+  }
+
+  // 提交資料（您可以將這裡串接後端 API 或寫入 GitHub）
+  function submitJournal() {
+    const ans1 = document.getElementById('input-1').value;
+    const ans2 = document.getElementById('input-2').value;
+    const ans3 = document.getElementById('input-3').value;
+
+    // 取得網址上的長者 ID (範例: index.html?user=elder01)
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('user') || 'anonymous';
+
+    const journalData = {
+      userId: userId,
+      timestamp: new Date().toISOString(),
+      q1: ans1,
+      q2: ans2,
+      q3: ans3
+    };
+
+    console.log("收集到的資料：", journalData);
+
+    // 這裡可以使用 fetch() 將 journalData 送回您的雲端後端或 API 網址
+    /*
+    fetch('您的後端API網址', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(journalData)
+    });
+    */
+
+    nextPage(4); // 顯示完成頁面
+  }
+</script>
+
+</body>
+</html>
